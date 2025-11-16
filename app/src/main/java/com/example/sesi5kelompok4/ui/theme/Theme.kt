@@ -1,59 +1,44 @@
 package com.example.sesi5kelompok4.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
-import androidx.compose.material.Typography as MTypography
-import androidx.compose.material.Shapes as MShapes
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 
-// gunakan warna yang sudah kamu definisikan di Color.kt (Purple80, Purple40, dll.)
-private val DarkColorPalette: Colors = darkColors(
-    primary = Purple80,
-    primaryVariant = PurpleGrey80,
-    secondary = Pink80
-)
-
-private val LightColorPalette: Colors = lightColors(
-    primary = Purple40,
-    primaryVariant = PurpleGrey40,
-    secondary = Pink40
-
-    /* contoh override lainnya:
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+private val LightPalette = lightColors(
+    primary = GreenMed,
+    primaryVariant = GreenDark,
+    secondary = GreenDark,
+    background = GreenCream,
+    surface = GreenSoft,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    */
+    onBackground = Color(0xFF222222),
+    onSurface = Color(0xFF222222)
 )
 
-// Simple Material v1 Typography (fallback) — sesuaikan kalau kamu punya Type.kt lain
-private val AppTypography = MTypography(
-    h6 = TextStyle(fontSize = 20.sp),
-    body1 = TextStyle(fontSize = 16.sp),
-    body2 = TextStyle(fontSize = 14.sp)
+private val DarkPalette = darkColors(
+    primary = GreenMed,
+    primaryVariant = GreenDark,
+    secondary = GreenSoft,
+    background = Color(0xFF111111),
+    surface = Color(0xFF1E1E1E),
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.White,
+    onSurface = Color.White
 )
-
-// Simple Material v1 Shapes (fallback) — gunakan Shapes default
-private val AppShapes = MShapes()
 
 @Composable
 fun Sesi5Kelompok4Theme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // parameter dynamicColor dihapus karena bukan fitur di Material v1
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
+    val colors = if (darkTheme) DarkPalette else LightPalette
 
     MaterialTheme(
         colors = colors,
-        typography = AppTypography,
-        shapes = AppShapes,
+        typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }
