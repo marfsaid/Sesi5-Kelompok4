@@ -3,196 +3,277 @@ package com.example.sesi5kelompok4
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
+// ----------------- Model -----------------
+data class Person(
+    val id: Int,
+    val name: String,
+    val nim: String,
+    val program: String,
+    val email: String,
+    val phone: String,
+    val bio: String
+)
+
+// ----------------- Sample Data (5 person) -----------------
+val samplePeople = listOf(
+    Person(
+        id = 0,
+        name = "Rijal Saputra",
+        nim = "12014001",
+        program = "Teknik Informatika",
+        email = "rijal@example.com",
+        phone = "+62 812-0000-0001",
+        bio = "Mahasiswa aktif yang tertarik di mobile development dan game."
+    ),
+    Person(
+        id = 1,
+        name = "Siti Aisyah",
+        nim = "12014002",
+        program = "Sistem Informasi",
+        email = "siti@example.com",
+        phone = "+62 812-0000-0002",
+        bio = "Gemar UI/UX dan prototyping aplikasi."
+    ),
+    Person(
+        id = 2,
+        name = "Andi Pratama",
+        nim = "12014003",
+        program = "Teknik Komputer",
+        email = "andi@example.com",
+        phone = "+62 812-0000-0003",
+        bio = "Spesialis embedded & IoT, suka utak-atik hardware."
+    ),
+    Person(
+        id = 3,
+        name = "Dewi Lestari",
+        nim = "12014004",
+        program = "Teknik Informatika",
+        email = "dewi@example.com",
+        phone = "+62 812-0000-0004",
+        bio = "Tertarik pada machine learning dan data analysis."
+    ),
+    Person(
+        id = 4,
+        name = "Budi Santoso",
+        nim = "12014005",
+        program = "Sistem Informasi",
+        email = "budi@example.com",
+        phone = "+62 812-0000-0005",
+        bio = "Backend developer, menyukai optimasi performa."
+    )
+)
+
+// ----------------- Activity -----------------
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ProfileApp()
-        }
-    }
-}
-
-@Composable
-fun ProfileApp() {
-    var selectedScreen by remember { mutableStateOf(0) } // 0 = About, 1 = Skills, 2 = Contact
-    var isDark by rememberSaveable { mutableStateOf(false) }
-
-    val colors = if (isDark) darkColors() else lightColors()
-
-    MaterialTheme(colors = colors) {
-        val scaffoldState = rememberScaffoldState()
-
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                TopAppBar(title = { Text("My Profile") })
-            },
-            bottomBar = {
-                BottomNavigation {
-                    BottomNavigationItem(
-                        icon = { Icon(Icons.Default.Person, contentDescription = "About") },
-                        label = { Text("About") },
-                        selected = selectedScreen == 0,
-                        onClick = { selectedScreen = 0 }
-                    )
-                    BottomNavigationItem(
-                        icon = { Icon(Icons.Default.List, contentDescription = "Skills") },
-                        label = { Text("Skills") },
-                        selected = selectedScreen == 1,
-                        onClick = { selectedScreen = 1 }
-                    )
-                    BottomNavigationItem(
-                        icon = { Icon(Icons.Default.Call, contentDescription = "Contact") },
-                        label = { Text("Contact") },
-                        selected = selectedScreen == 2,
-                        onClick = { selectedScreen = 2 }
-                    )
-                }
-            },
-            floatingActionButton = {
-                if (selectedScreen == 0) {
-                    FloatingActionButton(onClick = { isDark = !isDark }) {
-                        Icon(Icons.Default.Brightness4, contentDescription = "Toggle theme")
-                    }
-                }
-            },
-            content = { padding ->
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp)
-                ) {
-                    when (selectedScreen) {
-                        0 -> AboutScreen()
-                        1 -> SkillsScreen()
-                        2 -> ContactScreen(scaffoldState)
-                    }
-                }
-            }
-        )
-    }
-}
-
-@Composable
-fun AboutScreen() {
-    val defaultName = "Mr Rijal"
-    val defaultNim = "123456789"
-    val defaultProgram = "Sistem Tekno"
-    var name by rememberSaveable { mutableStateOf(defaultName) }
-    var nim by rememberSaveable { mutableStateOf(defaultNim) }
-    var program by rememberSaveable { mutableStateOf(defaultProgram) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(Modifier.height(24.dp))
-        Icon(Icons.Default.Person, contentDescription = "Profile", modifier = Modifier.size(120.dp))
-        Spacer(Modifier.height(12.dp))
-        Text(text = name, style = MaterialTheme.typography.h6)
-        Text("NIM: $nim")
-        Text("Program: $program")
-        Spacer(Modifier.height(20.dp))
-
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text("Biodata Singkat", style = MaterialTheme.typography.subtitle1)
-                Spacer(Modifier.height(8.dp))
-                Text("Mahasiswa aktif yang sedang belajar Jetpack Compose.")
-            }
-        }
-
-        Spacer(Modifier.height(20.dp))
-
-        // Simple editable fields inline (very basic)
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nama") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-        OutlinedTextField(
-            value = nim,
-            onValueChange = { nim = it },
-            label = { Text("NIM") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(8.dp))
-        OutlinedTextField(
-            value = program,
-            onValueChange = { program = it },
-            label = { Text("Program Studi") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(Modifier.height(24.dp))
-    }
-}
-
-@Composable
-fun SkillsScreen() {
-    val skills = listOf(
-        "Kotlin" to 0.9f,
-        "Jetpack Compose" to 0.8f,
-        "Android" to 0.85f,
-        "Java" to 0.7f,
-        "XML" to 0.6f
-    )
-
-    LazyColumn {
-        items(skills) { (skill, progress) ->
-            Card(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)) {
-                Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.CheckCircle, contentDescription = null)
-                    Spacer(Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(skill, style = MaterialTheme.typography.subtitle1)
-                        Spacer(Modifier.height(6.dp))
-                        LinearProgressIndicator(progress = progress, modifier = Modifier.fillMaxWidth().height(6.dp))
-                    }
-                    Spacer(Modifier.width(12.dp))
-                    Text("${(progress * 100).toInt()}%")
-                }
+            // Jika proyekmu pakai Theme custom, bungkus dengan Theme tersebut:
+            // Sesi5Kelompok4Theme { PersonsScreen(samplePeople) }
+            MaterialTheme {
+                PersonsScreen(people = samplePeople)
             }
         }
     }
 }
 
+// ----------------- UI -----------------
 @Composable
-fun ContactScreen(scaffoldState: ScaffoldState) {
+fun PersonsScreen(people: List<Person>) {
+    var selectedIndex by rememberSaveable { mutableStateOf(0) }
+    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.fillMaxSize().padding(12.dp)) {
-        Text("Email: rijal@gmail.com")
-        Text("Phone: +62 812-4819-6647")
-        Spacer(Modifier.height(16.dp))
-        Row {
-            Button(onClick = {
-                scope.launch { scaffoldState.snackbarHostState.showSnackbar("Message sent!") }
-            }) {
-                Text("Send Message")
+
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Daftar Person (5)") })
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Tab row (quick switch)
+            ScrollableTabRow(
+                selectedTabIndex = selectedIndex,
+                edgePadding = 8.dp,
+                backgroundColor = MaterialTheme.colors.surface
+            ) {
+                people.forEachIndexed { idx, person ->
+                    Tab(
+                        selected = selectedIndex == idx,
+                        onClick = {
+                            selectedIndex = idx
+                            scope.launch { listState.animateScrollToItem(idx) }
+                        },
+                        text = { Text(person.name, maxLines = 1) }
+                    )
+                }
             }
-            Spacer(Modifier.width(12.dp))
-            OutlinedButton(onClick = { scope.launch { scaffoldState.snackbarHostState.showSnackbar("Opening social...") }}) {
-                Text("Social")
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Selected person brief card
+            SelectedPersonBrief(person = people[selectedIndex])
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // List of cards
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                itemsIndexed(items = people) { index, person ->
+                    PersonCard(
+                        person = person,
+                        isSelected = index == selectedIndex,
+                        onClick = {
+                            selectedIndex = index
+                            scope.launch { listState.animateScrollToItem(index) }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectedPersonBrief(person: Person) {
+    Surface(elevation = 4.dp, shape = MaterialTheme.shapes.medium) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Avatar placeholder
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colors.primary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Avatar",
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(person.name, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text("NIM: ${person.nim}  •  ${person.program}", style = MaterialTheme.typography.body2)
+            }
+        }
+    }
+}
+
+@Composable
+fun PersonCard(person: Person, isSelected: Boolean, onClick: () -> Unit) {
+    val borderColor = if (isSelected) MaterialTheme.colors.primary else Color.Transparent
+    Card(
+        elevation = if (isSelected) 8.dp else 3.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .then(
+                if (isSelected) Modifier.border(2.dp, borderColor, MaterialTheme.shapes.medium)
+                else Modifier
+            )
+    ) {
+        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            // Avatar
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colors.primary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "avatar",
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(person.name, fontWeight = FontWeight.SemiBold)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (isSelected) {
+                        Surface(
+                            color = MaterialTheme.colors.primary.copy(alpha = 0.12f),
+                            shape = MaterialTheme.shapes.small,
+                            elevation = 0.dp
+                        ) {
+                            Text(
+                                "Selected",
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.caption,
+                                color = MaterialTheme.colors.primary
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text("NIM: ${person.nim}", style = MaterialTheme.typography.body2)
+                Text("Program: ${person.program}", style = MaterialTheme.typography.body2)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Email, contentDescription = "email", modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(person.email, style = MaterialTheme.typography.caption)
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Phone, contentDescription = "phone", modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(person.phone, style = MaterialTheme.typography.caption)
+                }
             }
         }
     }
