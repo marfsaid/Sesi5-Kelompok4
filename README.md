@@ -1,9 +1,5 @@
 # Tugas Sesi 5 — Aplikasi Profil Kelompok (Jetpack Compose)
 
-**Penulis:** Said Muhammad Ma'ruf & Kelompok
-
-**Tanggal:** (isi sesuai pengumpulan)
-
 ---
 
 ## Ringkasan
